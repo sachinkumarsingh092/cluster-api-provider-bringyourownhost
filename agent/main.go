@@ -38,7 +38,8 @@ import (
 // labelFlags is a flag that holds a map of label key values.
 // One or more key value pairs can be passed using the same flag
 // The following example sets labelFlags with two items:
-//     -label "key1=value1" -label "key2=value2"
+//
+//	-label "key1=value1" -label "key2=value2"
 type labelFlags map[string]string
 
 // String implements flag.Value interface
@@ -173,16 +174,13 @@ func main() {
 	}
 
 	// Start certificate rotation goroutine.
-	// This is behind a feature flag for now. Set 'CERTIFICATE_ROTATION=true' to enable it.
-	if os.Getenv("CERTIFICATE_ROTATION") == "true" {
-		go func() {
-			err = certificateRotation(logger, hostName, config)
-			if err != nil {
-				logger.Error(err, "certificate rotation failed")
-				return
-			}
-		}()
-	}
+	go func() {
+		err = certificateRotation(logger, hostName, config)
+		if err != nil {
+			logger.Error(err, "certificate rotation failed")
+			return
+		}
+	}()
 
 	mgr, err := ctrl.NewManager(config, ctrl.Options{
 		Scheme:    scheme,
